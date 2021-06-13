@@ -1,7 +1,3 @@
-# Fix the Java Problem
-export _JAVA_AWT_WM_NONREPARENTING=1
-
-# Enable Powerlevel10k instant prompt. Should stay at the top of ~/.zshrc.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
@@ -43,7 +39,7 @@ zstyle ':completion:*' verbose true
 
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
-source /home/s4vitar/powerlevel10k/powerlevel10k.zsh-theme
+source /home/r4g3/powerlevel10k/powerlevel10k.zsh-theme
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
@@ -59,30 +55,18 @@ alias l='lsd --group-dirs=first'
 alias lla='lsd -lha --group-dirs=first'
 alias ls='lsd --group-dirs=first'
 alias cat='bat'
-
+alias catn='bat -p'
+alias catnm='/bin/cat'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias virtualenv="python3 -m venv"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Plugins
 source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/share/zsh-sudo/sudo.plugin.zsh
-
-# Functions
-function mkt(){
-	mkdir {nmap,content,exploits,scripts}
-}
-
-# Extract nmap information
-function extractPorts(){
-	ports="$(cat $1 | grep -oP '\d{1,5}/open' | awk '{print $1}' FS='/' | xargs | tr ' ' ',')"
-	ip_address="$(cat $1 | grep -oP '\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}' | sort -u | head -n 1)"
-	echo -e "\n[*] Extracting information...\n" > extractPorts.tmp
-	echo -e "\t[*] IP Address: $ip_address"  >> extractPorts.tmp
-	echo -e "\t[*] Open ports: $ports\n"  >> extractPorts.tmp
-	echo $ports | tr -d '\n' | xclip -sel clip
-	echo -e "[*] Ports copied to clipboard\n"  >> extractPorts.tmp
-	cat extractPorts.tmp; rm extractPorts.tmp
-}
 
 # Set 'man' colors
 function man() {
@@ -124,6 +108,25 @@ function rmk(){
 	scrub -p dod $1
 	shred -zun 10 -v $1
 }
+# bindkey
+bindkey "^U"    backward-kill-line
+bindkey "^u"    backward-kill-line
+bindkey "^[l"   down-case-word
+bindkey "^[L"   down-case-word
 
+# alt+<- | alt+->
+bindkey "^[f" forward-word
+bindkey "^[b" backward-word
+
+# ctrl+<- | ctrl+->
+bindkey "^[[1;5D" backward-word
+bindkey "^[[1;5C" forward-word
+
+#ctrl+supr
+bindkey '^H' backward-kill-word
+bindkey '5~' kill-word
 # Finalize Powerlevel10k instant prompt. Should stay at the bottom of ~/.zshrc.
 (( ! ${+functions[p10k-instant-prompt-finalize]} )) || p10k-instant-prompt-finalize
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+#export PATH="$PATH:$HOME/.rvm/bin"
